@@ -1,5 +1,6 @@
 # Association testing
 from fisher import pvalue
+from rpy2.robjects.packages import importr
 import rpy2.robjects as robjects
 from rpy2.robjects import FloatVector,StrVector
 import math
@@ -16,6 +17,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	# Grabbing R env object
 	r = robjects.r
 
+	stats = importr("stats")
 	print "Loaded R instance"
 	# Converting genos and phenos to R vectors
 	phenotypes = FloatVector(phenotype_list)
@@ -31,7 +33,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	robjects.globalenv["genotypes"] = genotypes
 
 	print "About to fit model"
-	lm = r.glm("phenotypes ~ genotypes - 1",family = "binomial")
+	lm = stats.glm("phenotypes ~ genotypes - 1",family = "binomial")
 	
 	print "Model fitted"
 	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
