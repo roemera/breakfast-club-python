@@ -12,9 +12,11 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	"""
 
 	"""
+	print "Made it into function"
 	# Grabbing R env object
 	r = robjects.r
 
+	print "Loaded R instance"
 	# Converting genos and phenos to R vectors
 	phenotypes = FloatVector(phenotype_list)
 	genotypes = StrVector(genotype_list)
@@ -23,11 +25,13 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	alleles = sorted(set(genotypes))
 	n_alleles = len(set(genotypes))
 
+	print "About to fit model"
 	# Model fitting
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 	lm = r.glm("phenotypes ~ genotypes - 1",family = "binomial")
 	
+	print "Model fitted"
 	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 	association_dict = {}
 	for i in range(n_alleles):
