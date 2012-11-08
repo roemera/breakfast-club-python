@@ -11,9 +11,6 @@ from scipy import stats
 
 """
 def logistic_regression(phenotype_list=[],genotype_list=[]):
-	"""
-
-	"""
 	# Grabbing R env object
 	r = robjects.r
 
