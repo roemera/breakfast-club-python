@@ -25,10 +25,12 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	alleles = sorted(set(genotypes))
 	n_alleles = len(set(genotypes))
 
-	print "About to fit model"
+	print "About to load env vars"
 	# Model fitting
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
+
+	print "About to fit model"
 	lm = r.glm("phenotypes ~ genotypes - 1",family = "binomial")
 	
 	print "Model fitted"
