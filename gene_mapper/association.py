@@ -1,14 +1,15 @@
 # Association testing
 from fisher import pvalue
-from rpy2.robjects.packages import importr
-import rpy2.robjects as robjects
-from rpy2.robjects import FloatVector,StrVector
+#from rpy2.robjects.packages import importr
+#import rpy2.robjects as robjects
+#from rpy2.robjects import FloatVector,StrVector
 import math
 from itertools import chain
 from collections import Counter
 import numpy as np
 from scipy import stats
 
+"""
 def logistic_regression(phenotype_list=[],genotype_list=[]):
 	"""
 
@@ -38,14 +39,11 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 
 	return association_dict
 
+"""
+
 def allelic_association(phenotype_list=[],genotype_list=[]):
 	"""
-		##Fisher P-Values
-		#http://en.wikipedia.org/wiki/Fisher's_exact_test
-
-		#			CaseA	ControlA
-		#With V		a		b	
-		#Without	c		d
+		
 	"""
 	case_alleles = []
 	control_alleles = []
@@ -69,11 +67,7 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 		for i in range(len(allele)):
 			table[0,i] = case_counts[allele[i]]
 			table[1,i] = control_counts[allele[i]]
-		print table
-		print case_alleles
-		print case_counts
-		print control_alleles
-		print control_counts
+
 		chi2, p, dof, ex = stats.chi2_contingency(table)
 		return p
 
