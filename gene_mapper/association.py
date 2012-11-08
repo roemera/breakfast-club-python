@@ -33,14 +33,6 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 
 """
 def allelic_association(case_alleles=[],control_alleles=[]):
-	"""
-		##Fisher P-Values
-		#http://en.wikipedia.org/wiki/Fisher's_exact_test
-
-		#			CaseA	ControlA
-		#With V		a		b	
-		#Without	c		d
-	"""
 	a=0
 	b=
 	alleles = list(set(unlist([case_alleles,control_alleles])))
