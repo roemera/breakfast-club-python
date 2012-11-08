@@ -9,7 +9,7 @@ from collections import Counter
 import numpy as np
 from scipy import stats
 
-"""
+
 def logistic_regression(phenotype_list=[],genotype_list=[]):
 	# Grabbing R env object
 	r = robjects.r
@@ -36,7 +36,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 
 	return association_dict
 
-"""
+
 
 def allelic_association(phenotype_list=[],genotype_list=[]):
 	"""
