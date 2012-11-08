@@ -54,12 +54,18 @@ class GenotypeReportReader:
 	def get_marker_names(self):
 		marker_names = []
 		for genotype in self.genotypes:
-			genotypes.append(genotype.marker_name)
-		return marker_names
+			marker_names.append(genotype.marker_name)
+		return list(set(marker_names))
 
 	def get_marker_alleles(self, marker_name):
 		alleles = []
 		for genotype in self[marker_name]:
 			alleles.extend(genotype.alleles)
 		return list(set(alleles))
+
+	def get_genotype(self, marker_name = "", sample_alias = ""):
+		for genotype in self.genotypes:
+			if genotype.marker_name == marker_name and genotype.sample_alias == sample_alias:
+				return genotype
+		return None
 
