@@ -44,7 +44,6 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 	"""
 	case_alleles = []
 	control_alleles = []
-	return "Made it to function"
 	for i in range(len(phenotype_list)):
 		loc_alleles = genotype_list[i].split(",")
 		if phenotype_list[i] == 1:
