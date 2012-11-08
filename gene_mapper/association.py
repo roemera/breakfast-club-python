@@ -3,6 +3,10 @@ from fisher import pvalue
 import rpy2.robjects as robjects
 from rpy2.robjects import FloatVector,StrVector
 import math
+from itertools import chain
+from collections import Counter
+import numpy as np
+import scipy as sp
 
 def logistic_regression(phenotype_list=[],genotype_list=[]):
 	"""
@@ -31,8 +35,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 
 	return association_dict
 
-"""
-def allelic_association(case_alleles=[],control_alleles=[]):
+def allelic_association(phenotype_list=[],genotype_list=[]):
 	"""
 		##Fisher P-Values
 		#http://en.wikipedia.org/wiki/Fisher's_exact_test
@@ -41,12 +44,27 @@ def allelic_association(case_alleles=[],control_alleles=[]):
 		#With V		a		b	
 		#Without	c		d
 	"""
-	a=0
-	b=
-	alleles = list(set(unlist([case_alleles,control_alleles])))
-	p = pvalue(a, b, c, d).two_tail	
+	case_alleles = []
+	control_alleles = []
+	for i in range(len(phenotype_list)):
+		loc_alleles = genotype_list[i].split(",")
+		if phenotype_list[i] == 1:
+			for a in loc_alleles:
+				case_alleles.append(a)
+		else:
+			for a in loc_alleles:
+				control_alleles.append(a)
+
+	allele = list(set(chain(case_alleles,control_alleles)))
+	if len(allele) > 2:
+		print "Allelic association testing currently not supported for > 2 alleles"
+		return None
+
+	case_counts = Counter(case_alleles)
+	control_counts = Counter(control_alleles)
+	p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
+	print p
 	return p
-"""
 
 if __name__=='__main__':
 	# Genos and Phenos
@@ -59,18 +77,5 @@ if __name__=='__main__':
 	for k in assoc.keys():
 		print "Allele",k,"\t","P-value",assoc[k][0],"\t","Odds Ratio",assoc[k][1]
 
-	"""
 	# Allelic Association testing
-	cases = []
-	controls = []
-	for i in range(len(phenos)):
-		alleles = genos[i].split(",")
-		if phenos[i] == 1:
-			for a in alleles:
-				cases.append(a)
-		else:
-			for a in alleles:
-				controls.append(a)
-
-	p_val = allelic_association()
-	"""
+	allelic_association(phenos,genos)
