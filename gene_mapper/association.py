@@ -7,7 +7,7 @@ import math
 from itertools import chain
 from collections import Counter
 #import numpy as np
-#from scipy import stats
+from scipy import stats
 
 """
 def logistic_regression(phenotype_list=[],genotype_list=[]):
