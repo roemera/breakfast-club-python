@@ -11,7 +11,7 @@ from scipy import stats
 
 
 r = robjects.r
-stats = importr("stats")
+r_stats = importr("stats")
 
 def logistic_regression(phenotype_list=[],genotype_list=[]):
 	# Converting genos and phenos to R vectors
@@ -26,7 +26,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 
-	lm = stats.glm("phenotypes ~ genotypes - 1",family = "binomial")	
+	lm = r_stats.glm("phenotypes ~ genotypes - 1",family = "binomial")	
 
 	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 	association_dict = {}
