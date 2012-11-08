@@ -1,1 +1,2 @@
 from parsers import GenotypeReportReader
+from association import logistic_regression
