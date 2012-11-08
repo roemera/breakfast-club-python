@@ -32,6 +32,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 
+	r.print("Hello")
 	sums = r.sum(phenotypes)
 	print sums
 
@@ -68,10 +69,11 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 				control_alleles.append(a)
 
 	allele = list(set(chain(case_alleles,control_alleles)))
+	"""
+	# Implementing slow scipy chi-square if we have more than two allles
 	if len(allele) > 2:
-		print "Allelic association testing currently not supported for > 2 alleles"
-		return None
-
+		table = np.zeros()
+	"""
 	case_counts = Counter(case_alleles)
 	control_counts = Counter(control_alleles)
 	p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
