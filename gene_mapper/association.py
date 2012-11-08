@@ -32,9 +32,13 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 
+	sums = r.sum(phenotypes)
+	print sums
+
 	print "About to fit model"
 	lm = stats.glm("phenotypes ~ genotypes - 1",family = "binomial")
 	
+
 	print "Model fitted"
 	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 	association_dict = {}
