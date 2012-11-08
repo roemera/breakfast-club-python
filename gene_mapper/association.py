@@ -10,11 +10,10 @@ import numpy as np
 from scipy import stats
 
 
-def logistic_regression(phenotype_list=[],genotype_list=[]):
-	# Grabbing R env object
-	r = robjects.r
+r = robjects.r
+stats = importr("stats")
 
-	stats = importr("stats")
+def logistic_regression(phenotype_list=[],genotype_list=[]):
 	# Converting genos and phenos to R vectors
 	phenotypes = FloatVector(phenotype_list)
 	genotypes = StrVector(genotype_list)
