@@ -64,7 +64,6 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 	control_counts = Counter(control_alleles)
 	p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
 	print p
-	return p
 
 if __name__=='__main__':
 	# Genos and Phenos
