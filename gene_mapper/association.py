@@ -79,7 +79,7 @@ if __name__=='__main__':
 	
 	# Function testing
 	print "Testing function"
-	assoc = logistic_regression(phenos,genos)
+	#assoc = logistic_regression(phenos,genos)
 	for k in assoc.keys():
 		print "Allele",k,"\t","P-value",assoc[k][0],"\t","Odds Ratio",assoc[k][1]
 
