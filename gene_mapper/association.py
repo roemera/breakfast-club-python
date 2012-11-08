@@ -32,7 +32,7 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 
-	r.print("Hello")
+	r.cat("Hello")
 	sums = r.sum(phenotypes)
 	print sums
 
