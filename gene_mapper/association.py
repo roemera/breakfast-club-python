@@ -7,18 +7,16 @@ import math
 from itertools import chain
 from collections import Counter
 import numpy as np
-import scipy as sp
+from scipy import stats
 
 def logistic_regression(phenotype_list=[],genotype_list=[]):
 	"""
 
 	"""
-	print "Made it into function"
 	# Grabbing R env object
 	r = robjects.r
 
 	stats = importr("stats")
-	print "Loaded R instance"
 	# Converting genos and phenos to R vectors
 	phenotypes = FloatVector(phenotype_list)
 	genotypes = StrVector(genotype_list)
@@ -26,21 +24,13 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 	# Grabbing alleles to return later
 	alleles = sorted(set(genotypes))
 	n_alleles = len(set(genotypes))
-	r.cat("Hello")
-	print "About to load env vars"
+
 	# Model fitting
 	robjects.globalenv["phenotypes"] = phenotypes
 	robjects.globalenv["genotypes"] = genotypes
 
-	
-	sums = r.sum(phenotypes)
-	print sums
+	lm = stats.glm("phenotypes ~ genotypes - 1",family = "binomial")	
 
-	print "About to fit model"
-	lm = stats.glm("phenotypes ~ genotypes - 1",family = "binomial")
-	
-
-	print "Model fitted"
 	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 	association_dict = {}
 	for i in range(n_alleles):
@@ -68,21 +58,33 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 			for a in loc_alleles:
 				control_alleles.append(a)
 
+	# Getting set of alleles and their counts
 	allele = list(set(chain(case_alleles,control_alleles)))
-	
-	# Implementing slow scipy chi-square if we have more than two allles
-	#if len(allele) > 2:
-	#	table = np.zeros(shape)
-	
 	case_counts = Counter(case_alleles)
 	control_counts = Counter(control_alleles)
+
+	# Implementing slow scipy chi-square if we have more than two allles
+	if len(allele) > 2:
+		table = np.zeros(shape=(2,len(allele)))
+		for i in range(len(allele)):
+			table[0,i] = case_counts[allele[i]]
+			table[1,i] = control_counts[allele[i]]
+		print table
+		print case_alleles
+		print case_counts
+		print control_alleles
+		print control_counts
+		chi2, p, dof, ex = stats.chi2_contingency(table)
+		return p
+
+
 	p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
-	print p
+	return p
 
 if __name__=='__main__':
 	# Genos and Phenos
 	phenos = [1,1,1,1,1,0,0,0,0,0,0,0,0]
-	genos = ["131,131","131,131","131,131","131,131","131,131","131,132","131,132","132,132","131,132","132,132","132,132","131,132","132,132"]
+	genos = ["131,131","131,131","131,131","131,131","131,131","131,132","131,132","132,132","131,133","132,132","132,132","131,132","132,132"]
 	
 	# Function testing
 	print "Testing function"
@@ -91,4 +93,5 @@ if __name__=='__main__':
 		print "Allele",k,"\t","P-value",assoc[k][0],"\t","Odds Ratio",assoc[k][1]
 
 	# Allelic Association testing
-	allelic_association(phenos,genos)
+	p_value = allelic_association(phenos,genos)
+	print "Allelic Association pvalue was",p_value
