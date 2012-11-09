@@ -1,3 +1,3 @@
+from association import allelic_association, allelic_association_barnard, logistic_regression
 from parsers import GenotypeReportReader
-from association import allelic_association
-from association import logistic_regression
+

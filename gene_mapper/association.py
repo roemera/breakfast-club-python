@@ -5,10 +5,46 @@ import rpy2.robjects as robjects
 from rpy2.robjects import FloatVector,StrVector
 import math
 from itertools import chain
-from collections import Counter
+from collections import Counter, defaultdict
 import numpy as np
-from scipy import stats
+from scipy.stats import chi2_contingency
 
+#Alex'es assoc test
+from barnard import Barnard
+from itertools import combinations
+
+
+def allelic_association_barnard(phenotype_list,genotype_list):
+	barnard = Barnard()
+	associations = []
+	for a_al, b_al in combinations(list(set(genotype_list)),2):
+		if a_al != b_al:
+			a_al_case = 0; a_al_control = 0;
+			b_al_case = 0; b_al_control = 0;
+			for phenotype, genotype in zip(phenotype_list,genotype_list):
+
+				if genotype == a_al:
+					if phenotype == 1:
+						a_al_case += 1
+					else:
+						a_al_control += 1
+
+				if genotype == b_al:
+					if phenotype == 1:
+						b_al_case += 1
+					else:
+						b_al_control += 1
+
+			p_val = barnard.test(a_al_case, a_al_control,b_al_case, b_al_control)
+
+			associations.append({
+				"a_al" : a_al,
+				"b_al" : b_al,
+				"p_val" : p_val
+
+			})
+	return associations
+###
 
 r = robjects.r
 r_stats = importr("stats")
@@ -34,7 +70,6 @@ def logistic_regression(phenotype_list=[],genotype_list=[]):
 		association_dict[alleles[i]] = [r.summary(lm).rx2('coefficients')[i + (3 * n_alleles)], math.exp(r.summary(lm).rx2('coefficients')[i])]
 
 	return association_dict
-
 
 
 def allelic_association(phenotype_list=[],genotype_list=[]):
@@ -64,7 +99,7 @@ def allelic_association(phenotype_list=[],genotype_list=[]):
 			table[0,i] = case_counts[allele[i]]
 			table[1,i] = control_counts[allele[i]]
 
-		chi2, p, dof, ex = stats.chi2_contingency(table)
+		chi2, p, dof, ex = chi2_contingency(table)
 		return p
 
 
