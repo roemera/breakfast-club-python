@@ -5,14 +5,75 @@ import rpy2.robjects as robjects
 from rpy2.robjects import FloatVector,StrVector
 import math
 from itertools import chain
-from collections import Counter
+from collections import Counter, defaultdict
 import numpy as np
-from scipy import stats
+from scipy.stats import chi2_contingency
+
+
+#Alex'es assoc test
+from barnard import Barnard
+from itertools import combinations
+
+
+def allelic_association_barnard(phenotype_list,genotype_list):
+	barnard = Barnard()
+	associations = []
+	for a_al, b_al in combinations(list(set(genotype_list)),2):
+		if a_al != b_al:
+			a_al_case = 0; a_al_control = 0;
+			b_al_case = 0; b_al_control = 0;
+			for phenotype, genotype in zip(phenotype_list,genotype_list):
+
+				if genotype == a_al:
+					if phenotype == 1:
+						a_al_case += 1
+					else:
+						a_al_control += 1
+
+				if genotype == b_al:
+					if phenotype == 1:
+						b_al_case += 1
+					else:
+						b_al_control += 1
+
+			p_val = barnard.test(a_al_case, a_al_control,b_al_case, b_al_control)
+
+			associations.append({
+				"a_al" : a_al,
+				"b_al" : b_al,
+				"p_val" : p_val
+
+			})
+	return associations
+###
+
+r = robjects.r
+r_stats = importr("stats")
+
+def logistic_regression(phenotype_list=[],genotype_list=[]):
+	# Converting genos and phenos to R vectors
+	phenotypes = FloatVector(phenotype_list)
+	genotypes = StrVector(genotype_list)
+	
+	# Grabbing alleles to return later
+	alleles = sorted(set(genotypes))
+	n_alleles = len(set(genotypes))
+
+	# Model fitting
+	robjects.globalenv["phenotypes"] = phenotypes
+	robjects.globalenv["genotypes"] = genotypes
+
+	lm = r_stats.glm("phenotypes ~ genotypes - 1",family = "binomial")	
+
+	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
+	association_dict = {}
+	for i in range(n_alleles):
+		association_dict[alleles[i]] = [r.summary(lm).rx2('coefficients')[i + (3 * n_alleles)], math.exp(r.summary(lm).rx2('coefficients')[i])]
+
+	return association_dict
+
 
 class AssociationTesting:
-	"""
-		Class for association of MSATs/INDELs:
-	"""
 	def __init__(self):
 		self.r = robjects.r
 
