@@ -76,7 +76,7 @@ class AssociationTesting:
 
 		test_stat = lm.rx2("null.deviance")[0] - lm.rx2("deviance")[0]
 		df = lm.rx2("df.null")[0] - lm.rx2("df.residual")[0]
-		p_value = self.r.pchisq(test_stat, df)[0]78
+		p_value = self.r.pchisq(test_stat, df)[0]
 
 		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 		#association_dict = {}
