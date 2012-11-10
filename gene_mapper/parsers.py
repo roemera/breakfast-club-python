@@ -61,7 +61,7 @@ class GenotypeReportReader:
 		alleles = []
 		for genotype in self[marker_name]:
 			alleles.append(genotype.alleles)
-		return list(set(alleles))
+		return alleles
 
 	def get_genotype(self, marker_name = "", sample_alias = ""):
 		for genotype in self.genotypes:
