@@ -73,13 +73,10 @@ class AssociationTesting:
 		robjects.globalenv["genotypes"] = genotypes
 
 		lm = self.r.glm("phenotypes ~ genotypes",family = "binomial")	
-<<<<<<< HEAD
-		#p_value = self.r.pchisq(lm.rx2('null.deviance') - lm.rx2('deviance'), lm.rx2('df.null') - lm.rx2('df.residual'), lower.tail = FALSE)
-=======
+
 		test_stat = lm.rx2("null.deviance")[0] - lm.rx2("deviance")[0]
 		df = lm.rx2("df.null")[0] - lm.rx2("df.residual")[0]
 		p_value = self.r.pchisq(test_stat, df)[0]
->>>>>>> 58e86a2f940596ba344a5c0f2071f363026ebd4c
 
 		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 		#association_dict = {}
