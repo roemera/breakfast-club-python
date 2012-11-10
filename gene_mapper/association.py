@@ -8,6 +8,7 @@ from itertools import chain
 from collections import Counter, defaultdict
 import numpy as np
 from scipy.stats import chi2_contingency
+from fisher import pvalue
 
 
 #Alex'es assoc test
@@ -16,7 +17,6 @@ from itertools import combinations
 
 
 def allelic_association_barnard(phenotype_list,genotype_list):
-	barnard = Barnard()
 	associations = []
 	for a_al, b_al in combinations(list(set(genotype_list)),2):
 		if a_al != b_al:
@@ -36,7 +36,7 @@ def allelic_association_barnard(phenotype_list,genotype_list):
 					else:
 						b_al_control += 1
 
-			p_val = barnard.test(a_al_case, a_al_control,b_al_case, b_al_control)
+			p_val = pvalue(a_al_case, a_al_control,b_al_case, b_al_control)
 
 			associations.append({
 				"a_al" : a_al,
