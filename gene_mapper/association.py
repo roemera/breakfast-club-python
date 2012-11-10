@@ -9,73 +9,47 @@ from collections import Counter, defaultdict
 import numpy as np
 from scipy.stats import chi2_contingency
 from fisher import pvalue
-
-
-#Alex'es assoc test
-from barnard import Barnard
 from itertools import combinations
 
 
-def allelic_association_barnard(phenotype_list,genotype_list):
-	associations = []
-	for a_al, b_al in combinations(list(set(genotype_list)),2):
-		if a_al != b_al:
-			a_al_case = 0; a_al_control = 0;
-			b_al_case = 0; b_al_control = 0;
-			for phenotype, genotype in zip(phenotype_list,genotype_list):
-
-				if genotype == a_al:
-					if phenotype == 1:
-						a_al_case += 1
-					else:
-						a_al_control += 1
-
-				if genotype == b_al:
-					if phenotype == 1:
-						b_al_case += 1
-					else:
-						b_al_control += 1
-
-			p_val = pvalue(a_al_case, a_al_control,b_al_case, b_al_control)
-
-			associations.append({
-				"a_al" : a_al,
-				"b_al" : b_al,
-				"p_val" : p_val
-
-			})
-	return associations
-###
 
 r = robjects.r
 r_stats = importr("stats")
-
-def logistic_regression(phenotype_list=[],genotype_list=[]):
-	# Converting genos and phenos to R vectors
-	phenotypes = FloatVector(phenotype_list)
-	genotypes = StrVector(genotype_list)
-	
-	# Grabbing alleles to return later
-	alleles = sorted(set(genotypes))
-	n_alleles = len(set(genotypes))
-
-	# Model fitting
-	robjects.globalenv["phenotypes"] = phenotypes
-	robjects.globalenv["genotypes"] = genotypes
-
-	lm = r_stats.glm("phenotypes ~ genotypes - 1",family = "binomial")	
-
-	# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
-	association_dict = {}
-	for i in range(n_alleles):
-		association_dict[alleles[i]] = [r.summary(lm).rx2('coefficients')[i + (3 * n_alleles)], math.exp(r.summary(lm).rx2('coefficients')[i])]
-
-	return association_dict
 
 
 class AssociationTesting:
 	def __init__(self):
 		self.r = robjects.r
+
+	def allelic_association_comb(self, phenotype_list,genotype_list):
+		associations = []
+		for a_al, b_al in combinations(list(set(genotype_list)),2):
+			if a_al != b_al:
+				a_al_case = 0; a_al_control = 0;
+				b_al_case = 0; b_al_control = 0;
+				for phenotype, genotype in zip(phenotype_list,genotype_list):
+
+					if genotype == a_al:
+						if phenotype == 1:
+							a_al_case += 1
+						else:
+							a_al_control += 1
+
+					if genotype == b_al:
+						if phenotype == 1:
+							b_al_case += 1
+						else:
+							b_al_control += 1
+
+				p_val = pvalue(a_al_case, a_al_control,b_al_case, b_al_control)
+
+				associations.append({
+					"a_al" : a_al,
+					"b_al" : b_al,
+					"p_val" : round(p_val.two_tail,4)
+
+				})
+		return associations
 
 	def single_maker_logistic_association(self, phenotype_list=[], genotype_list=[]):
 		"""
@@ -99,7 +73,7 @@ class AssociationTesting:
 		robjects.globalenv["genotypes"] = genotypes
 
 		lm = self.r.glm("phenotypes ~ genotypes",family = "binomial")	
-		p_value = self.r.pchisq(lm.rx2('null.deviance') - lm.rx2('deviance'), lm.rx2('df.null') - lm.rx2('df.residual'), lower.tail = FALSE)
+		#p_value = self.r.pchisq(lm.rx2('null.deviance') - lm.rx2('deviance'), lm.rx2('df.null') - lm.rx2('df.residual'), lower.tail = FALSE)
 
 		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 		#association_dict = {}
@@ -142,7 +116,7 @@ class AssociationTesting:
 				table[0,i] = case_counts[allele[i]]
 				table[1,i] = control_counts[allele[i]]
 
-			chi2, p, dof, ex = stats.chi2_contingency(table)
+			chi2, p, dof, ex = chi2_contingency(table)
 			return p
 
 		# Running fast Fisher's algoritm if 
