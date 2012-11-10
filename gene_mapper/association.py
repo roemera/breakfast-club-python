@@ -24,7 +24,7 @@ class AssociationTesting:
 	def allelic_association_comb(self, phenotype_list,genotype_list):
 		associations = []
 		for a_al, b_al in combinations(list(set(genotype_list)),2):
-			if a_al != b_al:
+			if True:
 				a_al_case = 0; a_al_control = 0;
 				b_al_case = 0; b_al_control = 0;
 				for phenotype, genotype in zip(phenotype_list,genotype_list):
@@ -76,7 +76,7 @@ class AssociationTesting:
 
 		test_stat = lm.rx2("null.deviance")[0] - lm.rx2("deviance")[0]
 		df = lm.rx2("df.null")[0] - lm.rx2("df.residual")[0]
-		p_value = self.r.pchisq(test_stat, df)[0]
+		p_value = self.r.pchisq(test_stat, df)[0]78
 
 		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 		#association_dict = {}
