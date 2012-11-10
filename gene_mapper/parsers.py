@@ -61,7 +61,7 @@ class GenotypeReportReader:
 		alleles = []
 		for genotype in self[marker_name]:
 			if len(genotype.alleles) > 0:
-				alleles.extend(",".join(genotype.alleles)
+				alleles.extend(",".join(genotype.alleles))
 		return list(set(alleles))
 
 	def get_genotype(self, marker_name = "", sample_alias = ""):
