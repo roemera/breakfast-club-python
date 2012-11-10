@@ -99,7 +99,9 @@ class AssociationTesting:
 		robjects.globalenv["genotypes"] = genotypes
 
 		lm = self.r.glm("phenotypes ~ genotypes",family = "binomial")	
-		p_value = self.r.pchisq(lm.rx2('null.deviance') - lm.rx2('deviance'), lm.rx2('df.null') - lm.rx2('df.residual'), lower.tail = FALSE)
+		test_stat = lm.rx2("null.deviance")[0] - lm.rx2("deviance")[0]
+		df = lm.rx2("df.null")[0] - lm.rx2("df.residual")[0]
+		p_value = self.r.pchisq(test_stat, df)[0]
 
 		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
 		#association_dict = {}
@@ -142,7 +144,7 @@ class AssociationTesting:
 				table[0,i] = case_counts[allele[i]]
 				table[1,i] = control_counts[allele[i]]
 
-			chi2, p, dof, ex = stats.chi2_contingency(table)
+			chi2, p, dof, ex = chi2_contingency(table)
 			return p
 
 		# Running fast Fisher's algoritm if 
