@@ -86,6 +86,46 @@ class AssociationTesting:
 		#		association_dict[alleles[i]] = [self.r.summary(lm).rx2('coefficients')[i + (3 * n_alleles)], math.exp(self.r.summary(lm).rx2('coefficients')[i])]
 
 		return p_value
+		
+
+	def single_maker_genotypic_association(self, phenotype_list=[], genotype_list=[]):
+		"""
+			Computes single marker logistic regressionassociation for 
+			lists of phenotypes and genotypes of equal length 
+		"""
+		# Make sure phenotype and genotype lists are same size
+		if len(phenotype_list) != len(genotype_list):
+			return None
+
+		case_alleles = []
+		control_alleles = []
+		for i in range(len(phenotype_list)):
+			loc_alleles = genotype_list[i]
+			if phenotype_list[i] == 1:
+				for a in loc_alleles:
+					case_alleles.append(a)
+			else:
+				for a in loc_alleles:
+					control_alleles.append(a)
+
+		# Getting set of alleles and their counts
+		allele = list(set(chain(case_alleles,control_alleles)))
+		case_counts = Counter(case_alleles)
+		control_counts = Counter(control_alleles)
+
+		# Implementing slow scipy chi-square if we have more than two allles
+		if len(allele) > 2:
+			table = np.zeros(shape=(2,len(allele)))
+			for i in range(len(allele)):
+				table[0,i] = case_counts[allele[i]]
+				table[1,i] = control_counts[allele[i]]
+
+			chi2, p, dof, ex = chi2_contingency(table)
+			return p
+
+		# Running fast Fisher's algoritm if 
+		p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
+		return p
 
 	def single_maker_allelic_association(self, phenotype_list=[], genotype_list=[]):
 		"""
