@@ -13,8 +13,8 @@ from itertools import combinations
 
 
 
-r = robjects.r
-r_stats = importr("stats")
+#r = robjects.r
+#r_stats = importr("stats")
 
 
 class AssociationTesting:
@@ -89,10 +89,6 @@ class AssociationTesting:
 		
 
 	def single_maker_genotypic_association(self, phenotype_list=[], genotype_list=[]):
-		"""
-			Computes single marker logistic regressionassociation for 
-			lists of phenotypes and genotypes of equal length 
-		"""
 		# Make sure phenotype and genotype lists are same size
 		if len(phenotype_list) != len(genotype_list):
 			return None
