@@ -1,8 +1,8 @@
 # Association testing
 from fisher import pvalue
-from rpy2.robjects.packages import importr
-import rpy2.robjects as robjects
-from rpy2.robjects import FloatVector,StrVector
+#from rpy2.robjects.packages import importr
+#import rpy2.robjects as robjects
+#from rpy2.robjects import FloatVector,StrVector
 import math
 from itertools import chain
 from collections import Counter, defaultdict
