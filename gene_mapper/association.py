@@ -14,33 +14,46 @@ class AssociationTesting:
 
 	def allelic_association_comb(self, phenotype_list,genotype_list):
 		associations = []
-		for a_al, b_al in combinations(list(set(genotype_list)),2):
+		allele_list = []
+		alleles = set()
+		for g in genotype_list:
+			if g == "":
+				allele_list.append(["",""])
+				alleles.add("")	
+			else:
+				allele_list.append(g.split(","))
+				for al in g.split(","):
+					alleles.add(al)
+
+		for a_al in alleles:
 			if True:
 				a_al_case = 0; a_al_control = 0;
 				b_al_case = 0; b_al_control = 0;
-				for phenotype, genotype in zip(phenotype_list,genotype_list):
+				for phenotype, genotype in zip(phenotype_list,allele_list):
 
-					if genotype == a_al:
-						if phenotype == 1:
-							a_al_case += 1
-						else:
-							a_al_control += 1
+					for allele in genotype:
+						if allele == a_al:
+							if phenotype == 1:
+								a_al_case += 1
+							else:
+								a_al_control += 1
 
-					if genotype == b_al:
-						if phenotype == 1:
-							b_al_case += 1
-						else:
-							b_al_control += 1
+						if genotype != a_al:
+							if phenotype == 1:
+								b_al_case += 1
+							else:
+								b_al_control += 1
 
 				p_val = pvalue(a_al_case, a_al_control,b_al_case, b_al_control)
 
 				associations.append({
 					"a_al" : a_al,
-					"b_al" : b_al,
+					"b_al" : "All Others",
 					"p_val" : round(p_val.two_tail,4)
 
 				})
 		return associations
+
 
 	def single_maker_genotypic_association(self, phenotype_list=[], genotype_list=[]):
 		# Make sure phenotype and genotype lists are same size
@@ -132,3 +145,5 @@ if __name__=='__main__':
 	# Genotypic Test
 	p_value = tester.single_maker_genotypic_association(phenos, genos)
 	print "Genotypic Association pvalue was",p_value
+
+	print tester.allelic_association_comb(phenos, genos)
