@@ -1,8 +1,5 @@
 # Association testing
 from fisher import pvalue
-#from rpy2.robjects.packages import importr
-#import rpy2.robjects as robjects
-#from rpy2.robjects import FloatVector,StrVector
 import math
 from itertools import chain
 from collections import Counter, defaultdict
@@ -11,15 +8,9 @@ from scipy.stats import chi2_contingency
 from fisher import pvalue
 from itertools import combinations
 
-
-
-#r = robjects.r
-#r_stats = importr("stats")
-
-
 class AssociationTesting:
 	def __init__(self):
-		self.r = robjects.r
+		pass
 
 	def allelic_association_comb(self, phenotype_list,genotype_list):
 		associations = []
@@ -50,43 +41,6 @@ class AssociationTesting:
 
 				})
 		return associations
-
-	def single_maker_logistic_association(self, phenotype_list=[], genotype_list=[]):
-		"""
-			Computes single marker logistic regressionassociation for 
-			lists of phenotypes and genotypes of equal length 
-		"""
-		# Make sure phenotype and genotype lists are same size
-		if len(phenotype_list) != len(genotype_list):
-			return None
-
-		# Converting genos and phenos to R vectors
-		phenotypes = FloatVector(phenotype_list)
-		genotypes = StrVector(genotype_list)
-
-		# Grabbing alleles to return later
-		alleles = sorted(set(genotypes))
-		n_alleles = len(set(genotypes))
-
-		# Model fitting
-		robjects.globalenv["phenotypes"] = phenotypes
-		robjects.globalenv["genotypes"] = genotypes
-
-		lm = self.r.glm("phenotypes ~ genotypes",family = "binomial")	
-
-		test_stat = lm.rx2("null.deviance")[0] - lm.rx2("deviance")[0]
-		df = lm.rx2("df.null")[0] - lm.rx2("df.residual")[0]
-		p_value = self.r.pchisq(test_stat, df)[0]
-
-		# Compiling dict to return association_dict[allele] = [p-value,odds ratio]
-		#association_dict = {}
-		#for i in range(n_alleles):
-		#	# Don't want to report results of intercept field
-		#	if i > 0:
-		#		association_dict[alleles[i]] = [self.r.summary(lm).rx2('coefficients')[i + (3 * n_alleles)], math.exp(self.r.summary(lm).rx2('coefficients')[i])]
-
-		return p_value
-		
 
 	def single_maker_genotypic_association(self, phenotype_list=[], genotype_list=[]):
 		# Make sure phenotype and genotype lists are same size
@@ -176,8 +130,3 @@ if __name__=='__main__':
 	# Allelic Association testing
 	p_value = tester.single_maker_allelic_association(phenos, genos)
 	print "Allelic Association pvalue was",p_value
-
-	# Logistic regression testing
-	p_values = tester.single_maker_logistic_association(phenos, genos)
-	print "Logistic Association pvalue was",p_values
-
