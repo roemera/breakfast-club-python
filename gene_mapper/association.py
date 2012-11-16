@@ -52,11 +52,9 @@ class AssociationTesting:
 		for i in range(len(phenotype_list)):
 			loc_alleles = genotype_list[i]
 			if phenotype_list[i] == 1:
-				for a in loc_alleles:
-					case_alleles.append(a)
+				case_alleles.append(loc_alleles)
 			else:
-				for a in loc_alleles:
-					control_alleles.append(a)
+				control_alleles.append(loc_alleles)
 
 		# Getting set of alleles and their counts
 		allele = list(set(chain(case_alleles,control_alleles)))
@@ -130,3 +128,7 @@ if __name__=='__main__':
 	# Allelic Association testing
 	p_value = tester.single_maker_allelic_association(phenos, genos)
 	print "Allelic Association pvalue was",p_value
+
+	# Genotypic Test
+	p_value = tester.single_maker_genotypic_association(phenos, genos)
+	print "Genotypic Association pvalue was",p_value
