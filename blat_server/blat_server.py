@@ -1,6 +1,6 @@
 # Python lib for interacting with BLAT server
 import os,sys
-from sh import gfServer
+import math
 
 """
 	BLAT server info:
@@ -18,19 +18,20 @@ class BlatClient:
 		self.port = port_number
 		self.is_protein = is_protein_bool
 
-	def blat_sequence(nuc_string="",organism=""):
+	def blat_sequence(self, nuc_string=""):
 		"""
-			Take a nucleotide sequence and an organism.
-			Returns an alignment. 
+			Take a nucleotide sequence. Returns a list of BlatAlignment objects. 
 		"""	
 		blat_alignments = []
 
 		to_blat = ">blatter\n%s" % nuc_string
-		blat_results = os.popen("echo %s | gfClient %s %i /blat_server/ stdin stdout" % (to_blat ,self.host, self.port)).read().split("\n")
+		print to_blat
+		print "echo '%s' | gfClient %s %i /blat_server/ stdin stdout" % (to_blat ,self.host, self.port)
+		blat_results = os.popen("echo '%s' | gfClient %s %i /blat_server/ stdin stdout" % (to_blat ,self.host, self.port)).read().split("\n")
 		for result in blat_results:
 			spl = result.split("\t")
 			if spl[0].isdigit():			
-				algn = BlatAlignment(result)
+				algn = BlatAlignment(result,self.is_protein)
 				blat_alignments.append(algn)
 
 		return blat_alignments
@@ -92,7 +93,7 @@ class BlatAlignment:
 
 		total = (sizeMul * (self.base_matches + self.repeat_matches + self.mismatches))
 		if total != 0:
-			milliBad = (1000 * (self.mismatches * sizeMul + insertFactor + round(3 * log(1 + sizeDif)))) / total
+			milliBad = (1000 * (self.mismatches * sizeMul + insertFactor + round(3 * math.log10(1 + sizeDif)))) / total
 		
 		pct_ident = 100.0 - milliBad * 0.1
 		
