@@ -3,10 +3,13 @@ import os,sys
 from sh import gfServer
 
 """
-	BLAT server info
-	gfServer start 0.0.0.0 8123 canFam3.2bit &
-	gfServer start 0.0.0.0 8124 hg19.2bit &
-	gfServer start 0.0.0.0 8125 mm10.2bit &
+	BLAT server info:
+		gfServer start localhost 8123 canFam3.2bit &
+		gfServer start localhost 8124 hg19.2bit &
+		gfServer start localhost 8125 mm10.2bit &
+		gfServer -trans -mask start localhost 8126 canFam3.2bit &
+		gfServer -trans -mask start localhost 8127 hg19.2bit &
+		gfServer -trans -mask start localhost 8128 mm10.2bit &
 """
 
 class BlatClient:
@@ -78,20 +81,20 @@ class BlatAlignment:
 
 		# Break if something fucked up
 		if aliSize <= 0:
-		    return 0
+			return 0
 
 		# Get difference in alignment size
 		sizeDif = qAliSize - tAliSize
 		if sizeDif < 0:
-	        sizeDif = -sizeDif
+			sizeDif = -sizeDif
 		
 		insertFactor = self.query_gap_count
 
 		total = (sizeMul * (self.base_matches + self.repeat_matches + self.mismatches))
 		if total != 0:
-	    	milliBad = (1000 * (self.mismatches * sizeMul + insertFactor + round(3 * log(1 + sizeDif)))) / total
+			milliBad = (1000 * (self.mismatches * sizeMul + insertFactor + round(3 * log(1 + sizeDif)))) / total
 		
-	    pct_ident = 100.0 - milliBad * 0.1
+		pct_ident = 100.0 - milliBad * 0.1
 		
 		return pct_ident
 
