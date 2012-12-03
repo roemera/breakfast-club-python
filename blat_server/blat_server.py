@@ -25,8 +25,6 @@ class BlatClient:
 		blat_alignments = []
 
 		to_blat = ">blatter\n%s" % nuc_string
-		print to_blat
-		print "echo '%s' | gfClient %s %i /blat_server/ stdin stdout" % (to_blat ,self.host, self.port)
 		blat_results = os.popen("echo '%s' | gfClient %s %i /blat_server/ stdin stdout" % (to_blat ,self.host, self.port)).read().split("\n")
 		for result in blat_results:
 			spl = result.split("\t")
