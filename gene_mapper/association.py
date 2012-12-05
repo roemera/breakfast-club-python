@@ -133,8 +133,18 @@ class AssociationTesting:
 			chi2, p, dof, ex = chi2_contingency(table)
 			return p
 
-		# Running fast Fisher's algoritm if 
-		p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
+		# Running fast Fisher's algoritm OW 
+		if len(case_counts) == 2 and  len(control_counts) == 2:
+			p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], control_counts[allele[1]]).two_tail	
+
+		elif len(case_counts) == 2 and len(control_counts) == 1:
+			p = pvalue(case_counts[allele[0]], control_counts[allele[0]], case_counts[allele[1]], 0).two_tail	
+
+		elif len(case_counts) == 1 and len(control_counts) == 2:
+			p = pvalue(case_counts[allele[0]], control_counts[allele[0]], 0, control_counts[allele[1]]).two_tail	
+		else:
+			p = 1
+
 		return p
 
 
