@@ -17,13 +17,13 @@ class GenotypeReportGenotype:
 		allele_2 = report_line_dict["Allele 2"]
 
 		if allele_1.strip() != "?" and allele_1.strip() != "":
-			self.alleles.append(int(allele_1))
+			self.alleles.append(allele_1)
 
 			if allele_2.strip() == "" or allele_2.strip() == "?":
-				self.alleles.append(int(allele_1))
+				self.alleles.append(allele_1)
 
 			elif allele_2.strip() != "" and allele_2.strip() != "?":
-				self.alleles.append(int(allele_2))
+				self.alleles.append(allele_2)
 
 
 class GenotypeReportReader:
